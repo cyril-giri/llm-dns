@@ -1,0 +1,33 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Environment variables (CRITICAL!)
+.env
+.env.local
+.env.prod
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Setuptools and distribution folders
+*.egg-info/
+dist/
+build/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Local test files or logs (optional)
+logs/
+*.log
