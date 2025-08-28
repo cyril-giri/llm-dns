@@ -42,5 +42,7 @@ def generate_response(prompt: str) -> str:
         return response_text
         
     except Exception as e:
-        error_msg = f"Error: {type(e).__name__}"
-        return error_msg
+        error_type = type(e).__name__
+        if "Quota" in str(e) or "429" in str(e):
+            return "Error: API quota exceeded"
+        return f"Error: {error_type}"

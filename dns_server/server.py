@@ -2,6 +2,7 @@ import socket
 from dnslib import DNSRecord, QTYPE, RR, TXT
 from .config import SUBDOMAIN , DNS_PORT
 from .llm_handler import generate_response
+from .logger import log_info, log_error
 
 def extract_prompt(qname: str) -> str:
     """
@@ -34,12 +35,12 @@ def handle_dns_query(data: bytes, addr: tuple, sock: socket.socket) -> None:
         
         # Validate query type and target domain
         if not qname.endswith(SUBDOMAIN) or qtype != "TXT":
-            print(f"Dropped query: {qname} ({qtype})")
+            log_info(f"Dropped query: {qname} ({qtype}) from {addr}")
             return
         
         # Extract and process prompt
         prompt = extract_prompt(qname)
-        print(f"Processing prompt: {prompt}")
+        log_info(f"Received prompt: '{prompt}' from {addr}")
         
         # Generate response
         response = generate_response(prompt)
@@ -49,10 +50,10 @@ def handle_dns_query(data: bytes, addr: tuple, sock: socket.socket) -> None:
         reply.add_answer(RR(qname, QTYPE.TXT, rdata=TXT(response), ttl=300))
         sock.sendto(reply.pack(), addr)
         
-        print(f"Sent response to {addr[0]}:{addr[1]}")
+        log_info(f"Sent response to {addr} for {qname}: '{response}'")
         
     except Exception as e:
-        print(f"Error handling query from {addr}: {e}")
+        log_error(f"Error handling query from {addr}: {e}")
 
 def start_server(port: int = DNS_PORT) -> None:
     """
