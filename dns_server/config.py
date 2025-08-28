@@ -1,12 +1,16 @@
 import os
-from google import genai
-from google.genai import types
 from dotenv import load_dotenv
 load_dotenv()
 
+# env loading
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+MODEL_NAME = os.getenv("MODEL_NAME", "gemini-2.5-flash-lite")
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# dns server config
+DNS_PORT = 53
+SUBDOMAIN = "llm.cyrilgiri.work."
 
+# system instruction for the LLM
 SYSTEM_INSTRUCTION = """You are a helpful AI assistant whose responses are delivered exclusively through DNS TXT records. Your entire output must fit within a single DNS UDP packet, which has a strict practical limit of 255 characters.
 
         **RULES:**
@@ -17,14 +21,3 @@ SYSTEM_INSTRUCTION = """You are a helpful AI assistant whose responses are deliv
         5.  **CONTEXT:** You are resolving a query sent via a subdomain name. The user's prompt is the subdomain text.
 
         Respond now to the following user prompt, following these rules:"""
-
-response = client.models.generate_content(
-    model="gemini-2.5-flash-lite",
-    config=types.GenerateContentConfig(
-        system_instruction=SYSTEM_INSTRUCTION,
-        thinking_config=types.ThinkingConfig(thinking_budget=0)
-        ),
-    contents="Hello there can you tell me something about pandas"
-)
-
-print(response.text)
